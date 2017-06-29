@@ -1,6 +1,7 @@
 function player (name) {
     this.cards = [];
     this.name = name;
+    this.place = 0;
 
     this.getElement = function() {
         let newElement = document.createElement('div');

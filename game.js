@@ -39,27 +39,43 @@ let game = {
         game.wildSuit = deck.cards[0].suit;
     },
 
+    validCard(thisCard) {
+        let cardToBeat = this.table[this.table.length-1];
+        if (thisCard.suit == cardToBeat.suit && thisCard.face > cardToBeat.face) {
+            return true;
+        }
+        if (thisCard.suit == game.wildSuit && cardToBeat.suit !== game.wildSuit) {
+            return true;
+        }
+        return false;
+    },
+
     playState: function() {
         return (game.table.length %2 == 0) ? 'attacking' : 'defending';
     },
 
     // given card object, move it to table.  if its already on table, move it to discards
-    play: function(card) {
-        if (typeof game.players[card.player] !== 'undefined') {
-            // if even number of cards on table, its time to attack
-            if (game.playState() == 'attacking' && card.player !== game.currentPlayer) {
+    play: function(thisCard) {
+        if (typeof game.players[thisCard.player] !== 'undefined') {
+            if (game.playState() == 'defending') {
+                if (thisCard.player !== game.defender()) {
+                    return alert('Player #'+(game.defender()+1)+'\'s turn to defend');
+                }
+
+                if (!game.validCard(thisCard)) {
+                    return alert('That card doesnt work');
+                }
+            } else if (thisCard.player !== game.currentPlayer) {
+                // also need to check if subsequent attacks are valid
                 return alert('Player #'+(game.currentPlayer+1)+'\'s turn to attack');
             }
-            if (game.playState() == 'defending' && card.player !== game.defender()) {
-                return alert('Player #'+(game.defender()+1)+'\'s turn to defend');
-            }
             // if odd number of cards on the table, its time to defend
-            if (typeof game.players[card.player].cards[card.index] !== 'undefined') {
+            if (typeof game.players[thisCard.player].cards[thisCard.index] !== 'undefined') {
                 // this third check is a bit more paranoid than the first two, maybe
-                if (game.players[card.player].cards[card.index].suit == card.suit
-                    && game.players[card.player].cards[card.index].face == card.face) {
-                    game.table.push(card);
-                    game.players[card.player].cards.splice(card.index, 1);
+                if (game.players[thisCard.player].cards[thisCard.index].suit == thisCard.suit
+                    && game.players[thisCard.player].cards[thisCard.index].face == thisCard.face) {
+                    game.table.push(thisCard);
+                    game.players[thisCard.player].cards.splice(thisCard.index, 1);
                 }
             }
         }
@@ -85,6 +101,7 @@ let game = {
             tableDOM.appendChild(card.getElement(tableCard));
         });
 
+        deckDOM.appendChild(card.getElement(deck.cards[0]));
     }
 };
 

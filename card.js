@@ -15,9 +15,13 @@ let card = {
         }
     },
 
-    getElement: function(card) {
+    getElement: function(card, isDefender = false) {
         let newElement = document.createElement('span');
         newElement.className = 'card';
+        if (isDefender) {
+            console.log(isDefender);
+            newElement.className = 'card defender';
+        }
         newElement.appendChild(document.createTextNode(this.faces[card.face]));
 
         let suitElement = document.createElement('span');
@@ -25,11 +29,17 @@ let card = {
         suitElement.appendChild(document.createTextNode(this.suits[card.suit]));
         newElement.appendChild(suitElement);
 
+        return newElement;
+    },
+
+    getClickableElement: function(card) {
+        let newElement = this.getElement(card);
+
         newElement.addEventListener('click', function() {
             game.play(card);
             game.updateUI();
-        })
+        });
 
         return newElement;
-    },
+    }
 };

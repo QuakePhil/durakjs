@@ -10,7 +10,7 @@ function player (name) {
         newElement.appendChild(document.createElement('br'));
 
         for (let i = 0; i < this.cards.length; ++i) {
-            newElement.appendChild(card.getElement(this.cards[i]));
+            newElement.appendChild(card.getClickableElement(this.cards[i]));
         }
 
         return newElement;

@@ -97,9 +97,9 @@ let game = {
             playersDOM.appendChild(thisPlayer.getElement());
         });
 
-        game.table.forEach(function(tableCard) {
-            tableDOM.appendChild(card.getElement(tableCard));
-        });
+        for (let i = 0; i < game.table.length; ++i) {
+            tableDOM.appendChild(card.getElement(game.table[i], i % 2 !== 0));
+        };
 
         deckDOM.appendChild(card.getElement(deck.cards[0]));
     }

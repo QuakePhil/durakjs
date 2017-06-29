@@ -25,6 +25,11 @@ let card = {
         suitElement.appendChild(document.createTextNode(this.suits[card.suit]));
         newElement.appendChild(suitElement);
 
+        newElement.addEventListener('click', function() {
+            game.play(card);
+            game.updateUI();
+        })
+
         return newElement;
     },
 };

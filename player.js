@@ -22,5 +22,9 @@ function player (name) {
             if (b.suit == wildSuit) return 1;
             return a.suit > b.suit;
         });
+        // don't forget to re-index for the UI
+        for (var i in this.cards) {
+            this.cards[i].index = parseInt(i);
+        }
     }
 }

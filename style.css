@@ -16,6 +16,7 @@ html {
 }
 
 .card {
+    cursor: pointer;
     display: inline-block;
     margin: 2px;
     width: 40px;

@@ -1,14 +1,23 @@
 @import url(http://fonts.googleapis.com/css?family=Merriweather);
 
 *, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 html {
-  font-family: Merriweather, Georgia, serif;
-  font-size: 62.5%;
+    font-family: Merriweather, Georgia, serif;
+    font-size: 62.5%;
+}
+
+td {
+    vertical-align: top;
+}
+
+.bita {
+    display: block;
+    margin-bottom: 20px;
 }
 
 #players {

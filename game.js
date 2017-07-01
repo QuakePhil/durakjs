@@ -54,6 +54,14 @@ let game = {
         return (game.table.length %2 == 0) ? 'attacking' : 'defending';
     },
 
+    // only attacker can click bita
+    // if there's a defended table, put it to discards
+    endTurn: function() {
+        if (game.playState() !== 'attacking') {
+            return alert('Only attacker can end turn');
+        }
+    },
+
     // given card object, move it to table.  if its already on table, move it to discards
     play: function(thisCard) {
         if (typeof game.players[thisCard.player] !== 'undefined') {
@@ -97,11 +105,21 @@ let game = {
             playersDOM.appendChild(thisPlayer.getElement());
         });
 
+        tableDOM.appendChild(document.createTextNode('Table'));
+        tableDOM.appendChild(document.createElement('br'));
+
         for (let i = 0; i < game.table.length; ++i) {
             tableDOM.appendChild(card.getElement(game.table[i], i % 2 !== 0));
         };
 
-        deckDOM.appendChild(card.getElement(deck.cards[0]));
+        let currentPlayerName = game.playState() == 'attacking' 
+            ? game.players[game.currentPlayer].name
+            : game.players[game.defender()].name;
+        deckDOM.appendChild(document.createTextNode(currentPlayerName + ':'));
+
+        deckDOM.appendChild(card.getEndTurnElement());
+        deckDOM.appendChild(card.getDeckElement(deck.cards[0], deck.cards));
+        deckDOM.appendChild(card.getDeckElement(deck.discards[0], deck.discards));
     }
 };
 
@@ -119,3 +137,5 @@ let game = {
     // check if end of game
 //   check if no more players left with (place = 0)
 //     exit loop
+
+// todo - non-pointer-clickable deck/deck-cardback

@@ -25,7 +25,7 @@ td {
 }
 
 .card {
-    cursor: pointer;
+    cursor: default;
     display: inline-block;
     margin: 2px;
     width: 40px;

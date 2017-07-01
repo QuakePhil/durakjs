@@ -37,6 +37,7 @@ let card = {
 
     getClickableElement: function(card) {
         let newElement = this.getElement(card);
+        newElement.style.cursor = 'pointer';
 
         newElement.addEventListener('click', function() {
             game.play(card);

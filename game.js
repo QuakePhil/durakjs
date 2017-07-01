@@ -137,5 +137,3 @@ let game = {
     // check if end of game
 //   check if no more players left with (place = 0)
 //     exit loop
-
-// todo - non-pointer-clickable deck/deck-cardback

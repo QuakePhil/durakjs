@@ -27,5 +27,14 @@ function player (name) {
         for (var i in this.cards) {
             this.cards[i].index = parseInt(i);
         }
-    }
+    };
+
+    this.takeCards = function(cards, howMany = 1, callBack = false) {
+        for (let i = 0; i < howMany; ++i) {
+            this.cards.push(cards.pop());
+            if (callBack !== false) {
+                callBack(this.cards[this.cards.length-1]);
+            }
+        }
+    };
 }

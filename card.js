@@ -69,6 +69,7 @@ let card = {
         newElement.className = 'bita';
         newElement.addEventListener('click', function() {
             game.endTurn();
+            game.updateUI();
         });
         return newElement;
     }

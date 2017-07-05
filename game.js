@@ -28,12 +28,9 @@ let game = {
         game.players = [];
         for (let i = 0; i < numOfPlayers; ++i) {
             let newPlayer = new player('Player #'+(i+1));
-            for (let j = 0; j < 6; ++j) {
-                let playerCard = deck.cards.pop();
+            newPlayer.takeCards(deck.cards, 6, function(playerCard) {
                 playerCard.player = i;
-                playerCard.index = j;
-                newPlayer.cards.push(playerCard);
-            }
+            });
             game.players.push(newPlayer);
         }
         game.wildSuit = deck.cards[0].suit;
@@ -65,9 +62,36 @@ let game = {
     // only attacker can click bita
     // if there's a defended table, put it to discards
     endTurn: function() {
-        if (game.playState() !== 'attacking') {
-            return alert('Only attacker can end turn');
+        // attack defended
+        if (game.playState() == 'attacking') {
+            if (game.table.length == 0) {
+                return alert('Must attack at least once');
+            }
+            for (let i = 0; i < game.table.length; ++i) {
+                deck.discards.push(game.table[i]);
+            }
+            // return alert('Only attacker can end turn');
+        } else { // attack succeded
+            for (let i = 0; i < game.table.length; ++i) {
+                game.players[game.defender()].cards.push(game.table[i]);
+            }
+            // players who take the attacked cards forfeit their turn also
+            game.currentPlayer++;
+            if (game.currentPlayer >= game.players.length) game.currentPlayer = 0;
         }
+        game.table = [];
+
+        // deal up to 6 to anyone who needs
+        for (let i = 0; i < game.players.length; ++i) {
+            console.log(6 - game.players[i].cards.length);
+            game.players[i].takeCards(deck.cards, 6 - game.players[i].cards.length, function(playerCard) {
+                playerCard.player = i;
+            })
+        }
+
+        // next attacker
+        game.currentPlayer++;
+        if (game.currentPlayer >= game.players.length) game.currentPlayer = 0;
     },
 
     tableFaces: function() {
@@ -146,7 +170,12 @@ let game = {
 
         deckDOM.appendChild(card.getEndTurnElement());
         deckDOM.appendChild(card.getDeckElement(deck.cards[0], deck.cards));
-        deckDOM.appendChild(card.getDeckElement(deck.discards[0], deck.discards));
+        deckDOM.appendChild(document.createElement('br'));
+        deckDOM.appendChild(document.createElement('br'));
+        deckDOM.appendChild(document.createElement('br'));
+        deckDOM.appendChild(document.createElement('br'));
+        deckDOM.appendChild(document.createElement('br'));
+        deckDOM.appendChild(card.getDeckElement(false, deck.discards));
     }
 };
 

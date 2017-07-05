@@ -121,6 +121,12 @@ let game = {
         game.clearDOM(tableDOM);
         game.clearDOM(deckDOM);
 
+        // put new game ui here
+
+        if (game.players.length == 0) {
+            return;
+        }
+
         game.players.forEach(function(thisPlayer) {
             thisPlayer.sortByWildcard(game.wildSuit);
             playersDOM.appendChild(thisPlayer.getElement());

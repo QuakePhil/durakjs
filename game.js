@@ -40,12 +40,20 @@ let game = {
     },
 
     validCard(thisCard) {
-        let cardToBeat = this.table[this.table.length-1];
-        if (thisCard.suit == cardToBeat.suit && thisCard.face > cardToBeat.face) {
-            return true;
-        }
-        if (thisCard.suit == game.wildSuit && cardToBeat.suit !== game.wildSuit) {
-            return true;
+        if (this.table.length == 0) return true;
+
+        if (game.playState() == 'defending') {
+            let cardToBeat = this.table[this.table.length-1];
+            if (thisCard.suit == cardToBeat.suit && thisCard.face > cardToBeat.face) {
+                return true;
+            }
+            if (thisCard.suit == game.wildSuit && cardToBeat.suit !== game.wildSuit) {
+                return true;
+            }
+        } else {
+            for (let i = 0; i < game.table.length; ++i) {
+                if (thisCard.face == game.table[i].face) return true;
+            }
         }
         return false;
     },
@@ -62,6 +70,14 @@ let game = {
         }
     },
 
+    tableFaces: function() {
+        let faces = [];
+        game.table.forEach(function(tableCard) {
+            faces.push(card.faces[tableCard.face]);
+        });
+        return faces.join();
+    },
+
     // given card object, move it to table.  if its already on table, move it to discards
     play: function(thisCard) {
         if (typeof game.players[thisCard.player] !== 'undefined') {
@@ -70,13 +86,18 @@ let game = {
                     return alert('Player #'+(game.defender()+1)+'\'s turn to defend');
                 }
 
-                if (!game.validCard(thisCard)) {
-                    return alert('That card doesnt work');
-                }
             } else if (thisCard.player !== game.currentPlayer) {
-                // also need to check if subsequent attacks are valid
                 return alert('Player #'+(game.currentPlayer+1)+'\'s turn to attack');
             }
+
+            if (!game.validCard(thisCard)) {
+                if (game.playState() == 'defending') {
+                    return alert('That card doesnt work');
+                } else {
+                    return alert('Must play same card faces as already on table (' + game.tableFaces() + ')');
+                }
+            }
+
             // if odd number of cards on the table, its time to defend
             if (typeof game.players[thisCard.player].cards[thisCard.index] !== 'undefined') {
                 // this third check is a bit more paranoid than the first two, maybe

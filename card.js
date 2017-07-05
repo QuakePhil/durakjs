@@ -19,7 +19,6 @@ let card = {
         let newElement = document.createElement('span');
         newElement.className = 'card';
         if (isDefender) {
-            console.log(isDefender);
             newElement.className = 'card defender';
         }
 

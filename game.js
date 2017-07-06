@@ -16,7 +16,7 @@ let game = {
     },
 
     currentPlayerName: function() {
-        return game.playState() == 'attacking' 
+        return game.attacking() 
             ? game.players[game.attacker].name
             : game.players[game.defender].name;
     },
@@ -46,7 +46,11 @@ let game = {
     validCard: function(thisCard) {
         if (this.table.length == 0) return true;
 
-        if (game.playState() == 'defending') {
+        if (game.attacking()) {
+            for (let i = 0; i < game.table.length; ++i) {
+                if (thisCard.face == game.table[i].face) return true;
+            }
+        } else {
             let cardToBeat = this.table[this.table.length-1];
             if (thisCard.suit == cardToBeat.suit && thisCard.face > cardToBeat.face) {
                 return true;
@@ -54,23 +58,19 @@ let game = {
             if (thisCard.suit == game.wildSuit && cardToBeat.suit !== game.wildSuit) {
                 return true;
             }
-        } else {
-            for (let i = 0; i < game.table.length; ++i) {
-                if (thisCard.face == game.table[i].face) return true;
-            }
         }
         return false;
     },
 
-    playState: function() {
-        return (game.table.length %2 == 0) ? 'attacking' : 'defending';
+    attacking: function() {
+        return (game.table.length %2 == 0) ? true : false;
     },
 
     // only attacker can click bita
     // if there's a defended table, put it to discards
     endTurn: function() {
         // attack defended
-        if (game.playState() == 'attacking') {
+        if (game.attacking()) {
             if (game.table.length == 0) {
                 return alert('Must attack at least once');
             }
@@ -108,20 +108,19 @@ let game = {
     // given card object, move it to table.  if its already on table, move it to discards
     play: function(thisCard) {
         if (typeof game.players[thisCard.player] !== 'undefined') {
-            if (game.playState() == 'defending') {
-                if (thisCard.player !== game.defender) {
-                    return alert('Player #'+(game.defender+1)+'\'s turn to defend');
+            if (game.attacking()) {
+                if (thisCard.player !== game.attacker) {
+                    return alert('Player #'+(game.attacker+1)+'\'s turn to attack');
                 }
-
-            } else if (thisCard.player !== game.attacker) {
-                return alert('Player #'+(game.attacker+1)+'\'s turn to attack');
+            } else if (thisCard.player !== game.defender) {
+                return alert('Player #'+(game.defender+1)+'\'s turn to defend');
             }
 
             if (!game.validCard(thisCard)) {
-                if (game.playState() == 'defending') {
-                    return alert('That card doesnt work');
-                } else {
+                if (game.attacking()) {
                     return alert('Must play same card faces as already on table (' + game.tableFaces() + ')');
+                } else {
+                    return alert('That card doesnt work');
                 }
             }
 

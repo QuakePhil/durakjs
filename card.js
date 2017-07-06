@@ -64,7 +64,7 @@ let card = {
 
     getEndTurnElement: function(card) {
         let newElement = document.createElement('input');
-        newElement.value = game.playState() == 'attacking' ? 'Бита' : 'Возьму';
+        newElement.value = game.attacking() ? 'Бита' : 'Возьму';
         newElement.type = 'button';
         newElement.className = 'bita';
         newElement.addEventListener('click', function() {

@@ -8,11 +8,31 @@ let game = {
     wildSuit: 0,
 
     nextAttacker: function() {
-        game.attacker++;
-        if (game.attacker >= game.players.length) game.attacker = 0;
+        let gameOver = true;
+        for (let i = 0; i < game.players.length; ++i) {
+            if (game.players[i].place == 0) {
+                gameOver = false;
+                break;
+            }
+        }
+        if (gameOver) return false;
 
-        game.defender = game.attacker + 1;
-        if (game.defender >= game.players.length) game.defender = 0;
+        do {
+            game.attacker++;
+            if (game.attacker >= game.players.length) game.attacker = 0;
+        } while (game.players[game.attacker].place !== 0);
+
+        game.defender = game.attacker;
+        do {
+            game.defender++;
+            if (game.defender >= game.players.length) game.defender = 0;
+        } while (game.players[game.defender].place !== 0);
+
+        if (game.defender == game.attacker) {
+            // todo: set place for defender here...
+            return false;
+        }
+        return true;
     },
 
     currentPlayerName: function() {
@@ -70,7 +90,8 @@ let game = {
     // if there's a defended table, put it to discards
     endTurn: function() {
         // attack defended
-        if (game.attacking()) {
+        let wasAttacking = game.attacking();
+        if (wasAttacking) {
             if (game.table.length == 0) {
                 return alert('Must attack at least once');
             }
@@ -83,10 +104,14 @@ let game = {
                 game.table[i].player = game.defender;
                 game.players[game.defender].cards.push(game.table[i]);
             }
-            // players who take the attacked cards forfeit their turn also
-            game.nextAttacker();
         }
         game.table = [];
+
+        // has the attacker won?
+        if (game.players[game.attacker].cards.length == 0) {
+            game.players[game.attacker].place = game.place;
+            game.place++;
+        }
 
         // deal up to 6 to anyone who needs, starting with the attacker
         for (let i = game.attacker; i < game.players.length; ++i) {
@@ -97,7 +122,31 @@ let game = {
         }
 
         // next attacker
-        game.nextAttacker();
+        let keepPlaying = game.nextAttacker();
+        // if defender clicked end of turn, then skip his turn to attack
+        if (!wasAttacking) {
+            keepPlaying = game.nextAttacker();
+        }
+
+        if (!keepPlaying) {
+            alert('Game over:\n' + game.playerPlaces());
+        }
+    },
+
+    playerPlaces: function() {
+        return 'this function broken atm';
+        let places = [];
+        for (let i = 0; i < game.players.length; ++i) {
+            places.push({place: game.players[i].place, name: game.players[i].name});
+        }
+        places.sort(function(a, b) {
+            return a.place < b.place;
+        });
+        let out = '';
+        for (let i = 0; i < places.length; ++i) {
+            out = out + i + ': ' + places[i].name + '\n';
+        }
+        return out;
     },
 
     tableFaces: function() {
@@ -185,18 +234,3 @@ let game = {
         deckDOM.appendChild(card.getDeckElement(false, deck.discards));
     }
 };
-
-
-// play a game of durak:
-// game.place = 1 // players currently playing for 1st place
-// player.place = 0 // 1,2,3 - means player has finished
-// loop
-//   one of the players (place = 0) makes a move
-    // check if player won
-//   after each move, check if deck is 0 and player cards is 0, then
-//     player.place = game.place;
-//     game.place++
-//
-    // check if end of game
-//   check if no more players left with (place = 0)
-//     exit loop

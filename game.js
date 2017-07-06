@@ -43,7 +43,7 @@ let game = {
         game.wildSuit = deck.cards[0].suit;
     },
 
-    validCard(thisCard) {
+    validCard: function(thisCard) {
         if (this.table.length == 0) return true;
 
         if (game.playState() == 'defending') {

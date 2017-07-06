@@ -125,7 +125,7 @@ let ui = {
         tableDOM.appendChild(document.createElement('br'));
 
         for (let i = 0; i < game.table.length; ++i) {
-            tableDOM.appendChild(ui.getElement(game.table[i], i % 2 !== 0));
+            tableDOM.appendChild(ui.getCardElement(game.table[i], i % 2 !== 0));
         };
 
 

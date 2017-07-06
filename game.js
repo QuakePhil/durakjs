@@ -53,10 +53,15 @@ let game = {
         game.players = [];
         for (let i = 0; i < numOfPlayers; ++i) {
             let newPlayer = new player(i);
-            newPlayer.takeCards(deck.cards, 6);
             game.players.push(newPlayer);
         }
-        game.wildSuit = deck.cards[0].suit;
+        // deal second cards second (helps testing)
+        for (let i = 0; i < 6; ++i)
+        for (let i = 0; i < numOfPlayers; ++i) {
+            game.players[i].takeCards(deck.cards);
+        }
+        // this == 0 ? 0 bit is just for testing purposes when dealing a minideck
+        game.wildSuit = deck.cards.length == 0 ? 0 : deck.cards[0].suit;
         ui.updateUI();
     },
 
@@ -87,6 +92,7 @@ let game = {
 
         // has the attacker won?
         if (game.players[game.attacker].cards.length == 0) {
+            // how to record ties?
             game.players[game.attacker].place = game.place;
             game.place++;
         }

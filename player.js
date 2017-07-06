@@ -33,7 +33,9 @@ function player (index) {
     };
 
     this.takeCards = function(cards, howMany = 1) {
+        if (this.place == 0)
         for (let i = 0; i < howMany; ++i) {
+            if (cards.length == 0) return;
             this.cards.push(cards.pop());
             this.cards[this.cards.length-1].player = this.index;
         }

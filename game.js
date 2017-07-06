@@ -88,8 +88,11 @@ let game = {
         }
         game.table = [];
 
-        // deal up to 6 to anyone who needs
-        for (let i = 0; i < game.players.length; ++i) {
+        // deal up to 6 to anyone who needs, starting with the attacker
+        for (let i = game.attacker; i < game.players.length; ++i) {
+            game.players[i].takeCards(deck.cards, 6 - game.players[i].cards.length);
+        }
+        for (let i = 0; i < game.attacker; ++i) {
             game.players[i].takeCards(deck.cards, 6 - game.players[i].cards.length);
         }
 
@@ -169,8 +172,12 @@ let game = {
         deckDOM.appendChild(document.createTextNode(game.currentPlayerName() + ':'));
 
         deckDOM.appendChild(card.getEndTurnElement());
-        deckDOM.appendChild(card.getDeckElement(deck.cards[0], deck.cards));
-        deckDOM.appendChild(document.createElement('br'));
+        if (deck.cards.length == 0) {
+            deckDOM.appendChild(document.createTextNode(card.suits[game.wildSuit]));
+        } else {
+            deckDOM.appendChild(card.getDeckElement(deck.cards[0], deck.cards));
+            deckDOM.appendChild(document.createElement('br'));
+        }
         deckDOM.appendChild(document.createElement('br'));
         deckDOM.appendChild(document.createElement('br'));
         deckDOM.appendChild(document.createElement('br'));

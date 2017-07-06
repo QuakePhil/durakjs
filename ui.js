@@ -39,7 +39,7 @@ let ui = {
 
         newElement.addEventListener('click', function() {
             game.play(thisCard);
-            game.updateUI();
+            ui.updateUI();
         });
 
         return newElement;
@@ -68,8 +68,81 @@ let ui = {
         newElement.className = 'bita';
         newElement.addEventListener('click', function() {
             game.endTurn();
-            game.updateUI();
+            ui.updateUI();
         });
         return newElement;
     },
+
+    playerPlaces: function() {
+        return 'this function broken atm';
+        let places = [];
+        for (let i = 0; i < game.players.length; ++i) {
+            places.push({place: game.players[i].place, name: game.players[i].name});
+        }
+        places.sort(function(a, b) {
+            return a.place < b.place;
+        });
+        let out = '';
+        for (let i = 0; i < places.length; ++i) {
+            out = out + i + ': ' + places[i].name + '\n';
+        }
+        return out;
+    },
+
+    tableFaces: function() {
+        let faces = [];
+        game.table.forEach(function(tableCard) {
+            faces.push(card.faces[tableCard.face]);
+        });
+        return faces.join();
+    },
+
+    clearDOM: function(which) {
+        while (which.firstChild) { which.removeChild(which.firstChild); }
+    },
+
+    updateUI: function() {
+        let playersDOM = document.getElementById('players');
+        let tableDOM   = document.getElementById('table');
+        let deckDOM    = document.getElementById('deck');
+
+        ui.clearDOM(playersDOM);
+        ui.clearDOM(tableDOM);
+        ui.clearDOM(deckDOM);
+
+        // put new game ui here
+
+        if (game.players.length == 0) {
+            return;
+        }
+
+        game.players.forEach(function(thisPlayer) {
+            thisPlayer.sortByWildcard(game.wildSuit);
+            playersDOM.appendChild(ui.getPlayerElement(thisPlayer));
+        });
+
+        tableDOM.appendChild(document.createTextNode('Table'));
+        tableDOM.appendChild(document.createElement('br'));
+
+        for (let i = 0; i < game.table.length; ++i) {
+            tableDOM.appendChild(ui.getElement(game.table[i], i % 2 !== 0));
+        };
+
+
+        deckDOM.appendChild(document.createTextNode(game.currentPlayerName() + ':'));
+
+        deckDOM.appendChild(ui.getEndTurnElement());
+        if (deck.cards.length == 0) {
+            deckDOM.appendChild(document.createTextNode(card.suits[game.wildSuit]));
+        } else {
+            deckDOM.appendChild(ui.getDeckElement(deck.cards[0], deck.cards));
+            deckDOM.appendChild(document.createElement('br'));
+        }
+        deckDOM.appendChild(document.createElement('br'));
+        deckDOM.appendChild(document.createElement('br'));
+        deckDOM.appendChild(document.createElement('br'));
+        deckDOM.appendChild(document.createElement('br'));
+        deckDOM.appendChild(ui.getDeckElement(false, deck.discards));
+    }
+
 }

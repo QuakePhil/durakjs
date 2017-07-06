@@ -27,10 +27,8 @@ let game = {
         // deal the players
         game.players = [];
         for (let i = 0; i < numOfPlayers; ++i) {
-            let newPlayer = new player('Player #'+(i+1));
-            newPlayer.takeCards(deck.cards, 6, function(playerCard) {
-                playerCard.player = i;
-            });
+            let newPlayer = new player(i);
+            newPlayer.takeCards(deck.cards, 6);
             game.players.push(newPlayer);
         }
         game.wildSuit = deck.cards[0].suit;
@@ -73,6 +71,7 @@ let game = {
             // return alert('Only attacker can end turn');
         } else { // attack succeded
             for (let i = 0; i < game.table.length; ++i) {
+                game.table[i].player = game.defender();
                 game.players[game.defender()].cards.push(game.table[i]);
             }
             // players who take the attacked cards forfeit their turn also
@@ -83,10 +82,7 @@ let game = {
 
         // deal up to 6 to anyone who needs
         for (let i = 0; i < game.players.length; ++i) {
-            console.log(6 - game.players[i].cards.length);
-            game.players[i].takeCards(deck.cards, 6 - game.players[i].cards.length, function(playerCard) {
-                playerCard.player = i;
-            })
+            game.players[i].takeCards(deck.cards, 6 - game.players[i].cards.length);
         }
 
         // next attacker

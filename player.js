@@ -1,6 +1,7 @@
-function player (name) {
+function player (index) {
+    this.index = index;
     this.cards = [];
-    this.name = name;
+    this.name = 'Player #'+(index+1);
     this.place = 0;
 
     this.getElement = function() {
@@ -29,12 +30,10 @@ function player (name) {
         }
     };
 
-    this.takeCards = function(cards, howMany = 1, callBack = false) {
+    this.takeCards = function(cards, howMany = 1) {
         for (let i = 0; i < howMany; ++i) {
             this.cards.push(cards.pop());
-            if (callBack !== false) {
-                callBack(this.cards[this.cards.length-1]);
-            }
+            this.cards[this.cards.length-1].player = this.index;
         }
     };
 }

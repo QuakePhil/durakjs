@@ -41,7 +41,7 @@ let game = {
             : game.players[game.defender].name;
     },
 
-    shuffleUp: function(numOfPlayers) {
+    shuffleUpAndDeal: function(numOfPlayers) {
         game.place = 1; // playing for 1st place initially
         game.attacker = 0; // should determine this by who has lowest wildcard, or who last lost?
 
@@ -57,25 +57,7 @@ let game = {
             game.players.push(newPlayer);
         }
         game.wildSuit = deck.cards[0].suit;
-    },
-
-    validCard: function(thisCard) {
-        if (this.table.length == 0) return true;
-
-        if (game.attacking()) {
-            for (let i = 0; i < game.table.length; ++i) {
-                if (thisCard.face == game.table[i].face) return true;
-            }
-        } else {
-            let cardToBeat = this.table[this.table.length-1];
-            if (thisCard.suit == cardToBeat.suit && thisCard.face > cardToBeat.face) {
-                return true;
-            }
-            if (thisCard.suit == game.wildSuit && cardToBeat.suit !== game.wildSuit) {
-                return true;
-            }
-        }
-        return false;
+        ui.updateUI();
     },
 
     attacking: function() {
@@ -140,7 +122,7 @@ let game = {
                 return alert('Player #'+(game.defender+1)+'\'s turn to defend');
             }
 
-            if (!game.validCard(thisCard)) {
+            if (!card.validCard(thisCard)) {
                 if (game.attacking()) {
                     return alert('Must play same card faces as already on table (' + ui.tableFaces() + ')');
                 } else {

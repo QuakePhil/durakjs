@@ -2,14 +2,23 @@ let game = {
     players: [],
     table: [],
     place: 1, // which place are we playing for
-    currentPlayer: 0, // player currently attacking
+    attacker: 0, // player currently attacking
+    defender: 1, // player currently defending
 
     wildSuit: 0,
 
-    defender: function() {
-        let defendingPlayer = game.currentPlayer + 1;
-        if (defendingPlayer >= game.players.length) return 0;
-        return defendingPlayer;
+    nextAttacker: function() {
+        game.attacker++;
+        if (game.attacker >= game.players.length) game.attacker = 0;
+
+        game.defender = game.attacker + 1;
+        if (game.defender >= game.players.length) game.defender = 0;
+    },
+
+    currentPlayerName: function() {
+        return game.playState() == 'attacking' 
+            ? game.players[game.attacker].name
+            : game.players[game.defender].name;
     },
 
     clearDOM: function(which) {
@@ -18,7 +27,7 @@ let game = {
 
     shuffleUp: function(numOfPlayers) {
         game.place = 1; // playing for 1st place initially
-        game.currentPlayer = 0; // should determine this by who has lowest wildcard, or who last lost?
+        game.attacker = 0; // should determine this by who has lowest wildcard, or who last lost?
 
         // shuffle the deck
         deck.brandNew();
@@ -71,12 +80,11 @@ let game = {
             // return alert('Only attacker can end turn');
         } else { // attack succeded
             for (let i = 0; i < game.table.length; ++i) {
-                game.table[i].player = game.defender();
-                game.players[game.defender()].cards.push(game.table[i]);
+                game.table[i].player = game.defender;
+                game.players[game.defender].cards.push(game.table[i]);
             }
             // players who take the attacked cards forfeit their turn also
-            game.currentPlayer++;
-            if (game.currentPlayer >= game.players.length) game.currentPlayer = 0;
+            game.nextAttacker();
         }
         game.table = [];
 
@@ -86,8 +94,7 @@ let game = {
         }
 
         // next attacker
-        game.currentPlayer++;
-        if (game.currentPlayer >= game.players.length) game.currentPlayer = 0;
+        game.nextAttacker();
     },
 
     tableFaces: function() {
@@ -102,12 +109,12 @@ let game = {
     play: function(thisCard) {
         if (typeof game.players[thisCard.player] !== 'undefined') {
             if (game.playState() == 'defending') {
-                if (thisCard.player !== game.defender()) {
-                    return alert('Player #'+(game.defender()+1)+'\'s turn to defend');
+                if (thisCard.player !== game.defender) {
+                    return alert('Player #'+(game.defender+1)+'\'s turn to defend');
                 }
 
-            } else if (thisCard.player !== game.currentPlayer) {
-                return alert('Player #'+(game.currentPlayer+1)+'\'s turn to attack');
+            } else if (thisCard.player !== game.attacker) {
+                return alert('Player #'+(game.attacker+1)+'\'s turn to attack');
             }
 
             if (!game.validCard(thisCard)) {
@@ -159,10 +166,8 @@ let game = {
             tableDOM.appendChild(card.getElement(game.table[i], i % 2 !== 0));
         };
 
-        let currentPlayerName = game.playState() == 'attacking' 
-            ? game.players[game.currentPlayer].name
-            : game.players[game.defender()].name;
-        deckDOM.appendChild(document.createTextNode(currentPlayerName + ':'));
+
+        deckDOM.appendChild(document.createTextNode(game.currentPlayerName() + ':'));
 
         deckDOM.appendChild(card.getEndTurnElement());
         deckDOM.appendChild(card.getDeckElement(deck.cards[0], deck.cards));

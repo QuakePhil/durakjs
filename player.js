@@ -14,6 +14,8 @@ function player (index) {
             newElement.appendChild(card.getClickableElement(this.cards[i]));
         }
 
+        newElement.appendChild(document.createElement('br'));
+        newElement.appendChild(document.createElement('br'));
         return newElement;
     };
 

@@ -4,21 +4,6 @@ function player (index) {
     this.name = 'Player #'+(index+1);
     this.place = 0;
 
-    this.getElement = function() {
-        let newElement = document.createElement('div');
-
-        newElement.appendChild(document.createTextNode(this.name));
-        newElement.appendChild(document.createElement('br'));
-
-        for (let i = 0; i < this.cards.length; ++i) {
-            newElement.appendChild(card.getClickableElement(this.cards[i]));
-        }
-
-        newElement.appendChild(document.createElement('br'));
-        newElement.appendChild(document.createElement('br'));
-        return newElement;
-    };
-
     this.sortByWildcard = function(wildSuit) {
         this.cards.sort(function(a, b) {
             if (a.suit == b.suit) return a.face > b.face;

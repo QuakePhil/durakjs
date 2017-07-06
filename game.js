@@ -41,10 +41,6 @@ let game = {
             : game.players[game.defender].name;
     },
 
-    clearDOM: function(which) {
-        while (which.firstChild) { which.removeChild(which.firstChild); }
-    },
-
     shuffleUp: function(numOfPlayers) {
         game.place = 1; // playing for 1st place initially
         game.attacker = 0; // should determine this by who has lowest wildcard, or who last lost?
@@ -133,30 +129,6 @@ let game = {
         }
     },
 
-    playerPlaces: function() {
-        return 'this function broken atm';
-        let places = [];
-        for (let i = 0; i < game.players.length; ++i) {
-            places.push({place: game.players[i].place, name: game.players[i].name});
-        }
-        places.sort(function(a, b) {
-            return a.place < b.place;
-        });
-        let out = '';
-        for (let i = 0; i < places.length; ++i) {
-            out = out + i + ': ' + places[i].name + '\n';
-        }
-        return out;
-    },
-
-    tableFaces: function() {
-        let faces = [];
-        game.table.forEach(function(tableCard) {
-            faces.push(card.faces[tableCard.face]);
-        });
-        return faces.join();
-    },
-
     // given card object, move it to table.  if its already on table, move it to discards
     play: function(thisCard) {
         if (typeof game.players[thisCard.player] !== 'undefined') {
@@ -190,6 +162,34 @@ let game = {
         // otherwise, chek players
     },
 
+    playerPlaces: function() {
+        return 'this function broken atm';
+        let places = [];
+        for (let i = 0; i < game.players.length; ++i) {
+            places.push({place: game.players[i].place, name: game.players[i].name});
+        }
+        places.sort(function(a, b) {
+            return a.place < b.place;
+        });
+        let out = '';
+        for (let i = 0; i < places.length; ++i) {
+            out = out + i + ': ' + places[i].name + '\n';
+        }
+        return out;
+    },
+
+    tableFaces: function() {
+        let faces = [];
+        game.table.forEach(function(tableCard) {
+            faces.push(card.faces[tableCard.face]);
+        });
+        return faces.join();
+    },
+
+    clearDOM: function(which) {
+        while (which.firstChild) { which.removeChild(which.firstChild); }
+    },
+
     updateUI: function() {
         let playersDOM = document.getElementById('players');
         let tableDOM   = document.getElementById('table');
@@ -207,30 +207,30 @@ let game = {
 
         game.players.forEach(function(thisPlayer) {
             thisPlayer.sortByWildcard(game.wildSuit);
-            playersDOM.appendChild(thisPlayer.getElement());
+            playersDOM.appendChild(ui.getPlayerElement(thisPlayer));
         });
 
         tableDOM.appendChild(document.createTextNode('Table'));
         tableDOM.appendChild(document.createElement('br'));
 
         for (let i = 0; i < game.table.length; ++i) {
-            tableDOM.appendChild(card.getElement(game.table[i], i % 2 !== 0));
+            tableDOM.appendChild(ui.getElement(game.table[i], i % 2 !== 0));
         };
 
 
         deckDOM.appendChild(document.createTextNode(game.currentPlayerName() + ':'));
 
-        deckDOM.appendChild(card.getEndTurnElement());
+        deckDOM.appendChild(ui.getEndTurnElement());
         if (deck.cards.length == 0) {
             deckDOM.appendChild(document.createTextNode(card.suits[game.wildSuit]));
         } else {
-            deckDOM.appendChild(card.getDeckElement(deck.cards[0], deck.cards));
+            deckDOM.appendChild(ui.getDeckElement(deck.cards[0], deck.cards));
             deckDOM.appendChild(document.createElement('br'));
         }
         deckDOM.appendChild(document.createElement('br'));
         deckDOM.appendChild(document.createElement('br'));
         deckDOM.appendChild(document.createElement('br'));
         deckDOM.appendChild(document.createElement('br'));
-        deckDOM.appendChild(card.getDeckElement(false, deck.discards));
+        deckDOM.appendChild(ui.getDeckElement(false, deck.discards));
     }
 };

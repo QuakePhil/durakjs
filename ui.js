@@ -2,7 +2,12 @@ let ui = {
     getPlayerElement: function(thisPlayer) {
         let newElement = document.createElement('div');
 
-        newElement.appendChild(document.createTextNode(thisPlayer.name));
+        if (game.currentPlayerName() == thisPlayer.name) {
+            newElement.appendChild(document.createTextNode(card.pointer + thisPlayer.name));
+        } else {
+            newElement.appendChild(document.createTextNode(thisPlayer.name));
+        }
+
         newElement.appendChild(document.createElement('br'));
 
         for (let i = 0; i < thisPlayer.cards.length; ++i) {
@@ -133,7 +138,10 @@ let ui = {
 
         deckDOM.appendChild(ui.getEndTurnElement());
         if (deck.cards.length == 0) {
-            deckDOM.appendChild(document.createTextNode(card.suits[game.wildSuit]));
+            let wildElement = document.createElement('span');
+            wildElement.style.color = card.suitColors[game.wildSuit];
+            wildElement.appendChild(document.createTextNode(card.suits[game.wildSuit]));
+            deckDOM.appendChild(wildElement);
         } else {
             deckDOM.appendChild(ui.getDeckElement(deck.cards[0], deck.cards));
             deckDOM.appendChild(document.createElement('br'));

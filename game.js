@@ -1,4 +1,5 @@
 let game = {
+    moves: [],
     players: [],
     table: [],
     place: 1, // which place are we playing for
@@ -6,6 +7,27 @@ let game = {
     defender: 1, // player currently defending
 
     wildSuit: 0,
+
+    moveString: function() {
+        let s = '' + game.players.length;
+        // todo: s should also include the initial order of deck (or a randomizer seed?)
+        /*
+        var seed = 1;
+        function random() {
+            var x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        }
+
+        */
+        for (let i = 0; i < game.moves.length; ++i) {
+            if (typeof game.moves[i].suit !== 'undefined') {
+                s += ',' + game.moves[i].player + ':' + card.faces[game.moves[i].face] + card.suits[game.moves[i].suit];
+            } else {// end of turn
+                s += ',' + game.moves[i];
+            }
+        }
+        return s;
+    },
 
     nextAttacker: function() {
         let gameOver = true;
@@ -41,7 +63,12 @@ let game = {
             : game.players[game.defender].name;
     },
 
-    shuffleUpAndDeal: function(numOfPlayers) {
+    shuffleUpAndDeal: function(history) {
+        history = history.split(',');
+        numOfPlayers = history[0];
+        // todo: replay the rest of history[1...]
+
+        game.moves = []; // game move history
         game.place = 1; // playing for 1st place initially
         game.attacker = 0; // should determine this by who has lowest wildcard, or who last lost?
 
@@ -63,6 +90,9 @@ let game = {
         // this == 0 ? 0 bit is just for testing purposes when dealing a minideck
         game.wildSuit = deck.cards.length == 0 ? 0 : deck.cards[0].suit;
         ui.updateUI();
+
+        // todo: replay the rest of history[1...]
+
     },
 
     attacking: function() {
@@ -75,6 +105,7 @@ let game = {
         // attack defended
         let wasAttacking = game.attacking();
         if (wasAttacking) {
+            game.moves.push(game.attacker);
             if (game.table.length == 0) {
                 return alert('Must attack at least once');
             }
@@ -83,6 +114,7 @@ let game = {
             }
             // return alert('Only attacker can end turn');
         } else { // attack succeded
+            game.moves.push(game.defender);
             for (let i = 0; i < game.table.length; ++i) {
                 game.table[i].player = game.defender;
                 game.players[game.defender].cards.push(game.table[i]);
@@ -141,6 +173,7 @@ let game = {
                 // this third check is a bit more paranoid than the first two, maybe
                 if (game.players[thisCard.player].cards[thisCard.index].suit == thisCard.suit
                     && game.players[thisCard.player].cards[thisCard.index].face == thisCard.face) {
+                    game.moves.push(thisCard);
                     game.table.push(thisCard);
                     game.players[thisCard.player].cards.splice(thisCard.index, 1);
                 }

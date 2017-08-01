@@ -1,4 +1,5 @@
 let card = {
+    pointer: '☞ ',
     suits: ['♠', '♥', '♦', '♣'],
     suitColors: ['black', 'red', 'red', 'black'],
     //suits: ['♤', '♡', '♢', '♧'],

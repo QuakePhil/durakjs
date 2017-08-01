@@ -7,7 +7,7 @@ let deck = {
 
         this.cards = [];
         for (suit = 0; suit < 4; ++suit) {
-            for (face = 6; face <= 14; ++face) {
+            for (face = /*6*/10; face <= 14; ++face) {
                 this.cards.push({suit: suit, face: face});
             }
         }
@@ -15,6 +15,8 @@ let deck = {
 
     // re: https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
     shuffle: function() {
+console.log('Warning: shuffling disabled for debugging');
+return;
         for (let i = this.cards.length; i; i--) {
             let j = Math.floor(Math.random() * i);
             // ES6 alert
